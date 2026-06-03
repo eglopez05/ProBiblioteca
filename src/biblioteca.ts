@@ -1,65 +1,19 @@
-interface Libro {
+interface ILibro {
   id: number;
   titulo: string;
   autor: string;
   categoria: string;
   disponible: boolean;
 }
-class Libro {
-  constructor(
-    public id: number,
-    public titulo: string,
-    public autor: string,
-    public categoria: string,
-    public disponible: boolean
-  ) {}
-prestarlibro(usuarioId: number): boolean {      
-    if (this.disponible) {
-      this.disponible = false;
-      return true;
-    } else {
-      return false;
-    }
-}
-devolverlibro(): void {
-    this.disponible = true;
-  }
 
-listarlibros(): void {
-    console.log(`ID: ${this.id}, Título: ${this.titulo}, Autor: ${this.autor}, Categoría: ${this.categoria}, Disponible: ${this.disponible}`);
-  }
-buscarlibro(titulo: string): boolean {
-    return this.titulo.toLowerCase() === titulo.toLowerCase();
-  }
-
- }
-
-
-interface Usuario {
+interface IUsuario {
   id: number;
   nombre: string;
   correo: string;
   telefono: string;
 }
 
-class Usuario {  constructor(
-    public id: number,
-    public nombre: string,
-    public correo: string,
-    public telefono: string
-  ) {}
-
-registrarUsuario(): void {
-    console.log(`Usuario registrado: ${this.nombre}, Correo: ${this.correo}, Teléfono: ${this.telefono}`);
-  }
-buscarUsuario(nombre: string): boolean {
-    return this.nombre.toLowerCase() === nombre.toLowerCase();
-  }
-listarUsuarios(): void {    console.log(`ID: ${this.id}, Nombre: ${this.nombre}, Correo: ${this.correo}, Teléfono: ${this.telefono}`);
-  }
-}
-
-interface Prestamo {
+interface IPrestamo {
   id: number;
   libroId: number;
   usuarioId: number;
@@ -67,22 +21,7 @@ interface Prestamo {
   fechaDevolucion?: Date;
 }
 
-class Prestamo {  constructor(
-    public id: number,
-    public libroId: number,
-    public usuarioId: number,
-    public fechaPrestamo: Date,
-    public fechaDevolucion?: Date
-  ) {}
-prestarLibro(): void {    console.log(`Libro prestado: Libro ID ${this.libroId}, Usuario ID ${this.usuarioId}, Fecha de préstamo: ${this.fechaPrestamo}`);
-  }
-devolverLibro(): void {    this.fechaDevolucion = new Date();
-    console.log(`Libro devuelto: Libro ID ${this.libroId}, Usuario ID ${this.usuarioId}, Fecha de devolución: ${this.fechaDevolucion}`);
-  }
-listarPrestamos(): void {    console.log(`ID: ${this.id}, Libro ID: ${this.libroId}, Usuario ID: ${this.usuarioId}, Fecha de préstamo: ${this.fechaPrestamo}, Fecha de devolución: ${this.fechaDevolucion}`);
-  }
-}
-interface Categoria {
+interface ICategoria {
   id: number;
   nombre: string;
   tipo: string;
@@ -90,7 +29,63 @@ interface Categoria {
   descripcion: string;
 }
 
-class Categoria {  constructor(
+class Libro implements ILibro {
+  constructor(
+    public id: number,
+    public titulo: string,
+    public autor: string,
+    public categoria: string,
+    public disponible: boolean = true
+  ) {}
+
+  prestarLibro(): boolean {
+    if (this.disponible) {
+      this.disponible = false;
+      return true;
+    }
+    return false;
+  }
+
+  devolverLibro(): void {
+    this.disponible = true;
+  }
+
+  mostrarInfo(): void {
+    console.log(`
+Libro:
+ID: ${this.id}
+Título: ${this.titulo}
+Autor: ${this.autor}
+Categoría: ${this.categoria}
+Disponible: ${this.disponible ? "Sí" : "No"}
+`);
+  }
+}
+
+
+class Usuario implements IUsuario {
+  constructor(
+    public id: number,
+    public nombre: string,
+    public correo: string,
+    public telefono: string
+  ) {}
+
+  mostrarInfo(): void {
+    console.log(`
+Usuario:
+ID: ${this.id}
+Nombre: ${this.nombre}
+Correo: ${this.correo}
+Teléfono: ${this.telefono}
+`);
+  }
+}
+
+
+
+class Categoria implements ICategoria {
+  constructor(
     public id: number,
     public nombre: string,
     public tipo: string,
@@ -98,18 +93,138 @@ class Categoria {  constructor(
     public descripcion: string
   ) {}
 
-agregarCategoria(): void {    console.log(`Categoría agregada: ${this.nombre}, Tipo: ${this.tipo}, Género: ${this.genero}, Descripción: ${this.descripcion}`);
-  }
-eliminarCategoria(): void {    console.log(`Categoría eliminada: ${this.nombre}`);
-  }
-listarCategorias(): void {    console.log(`ID: ${this.id}, Nombre: ${this.nombre}, Tipo: ${this.tipo}, Género: ${this.genero}, Descripción: ${this.descripcion}`);
+  mostrarInfo(): void {
+    console.log(`
+Categoría:
+ID: ${this.id}
+Nombre: ${this.nombre}
+Tipo: ${this.tipo}
+Género: ${this.genero}
+Descripción: ${this.descripcion}
+`);
   }
 }
+
+
+class Prestamo implements IPrestamo {
+  public fechaDevolucion?: Date;
+
+  constructor(
+    public id: number,
+    public libroId: number,
+    public usuarioId: number,
+    public fechaPrestamo: Date
+  ) {}
+
+  registrarDevolucion(): void {
+    this.fechaDevolucion = new Date();
+  }
+
+  mostrarInfo(): void {
+    console.log(`
+Préstamo:
+ID: ${this.id}
+Libro ID: ${this.libroId}
+Usuario ID: ${this.usuarioId}
+Fecha Préstamo: ${this.fechaPrestamo}
+Fecha Devolución: ${
+      this.fechaDevolucion
+        ? this.fechaDevolucion.toLocaleDateString()
+        : "Pendiente"
+    }
+`);
+  }
+}
+
+
 class Biblioteca {
-  private libros: Libro[] = []  ;
+  private libros: Libro[] = [];
   private usuarios: Usuario[] = [];
-  private prestamos: Prestamo[] = [];
   private categorias: Categoria[] = [];
- }
+  private prestamos: Prestamo[] = [];
 
+  agregarLibro(libro: Libro): void {
+    this.libros.push(libro);
+  }
 
+  agregarUsuario(usuario: Usuario): void {
+    this.usuarios.push(usuario);
+  }
+
+  agregarCategoria(categoria: Categoria): void {
+    this.categorias.push(categoria);
+  }
+
+  listarLibros(): void {
+    console.log("\n===== LIBROS =====");
+    this.libros.forEach(libro => libro.mostrarInfo());
+  }
+
+  listarUsuarios(): void {
+    console.log("\n===== USUARIOS =====");
+    this.usuarios.forEach(usuario => usuario.mostrarInfo());
+  }
+
+  prestarLibro(
+    libroId: number,
+    usuarioId: number
+  ): void {
+    const libro = this.libros.find(l => l.id === libroId);
+
+    if (!libro) {
+      console.log("Libro no encontrado.");
+      return;
+    }
+
+    if (libro.prestarLibro()) {
+      const prestamo = new Prestamo(
+        this.prestamos.length + 1,
+        libroId,
+        usuarioId,
+        new Date()
+      );
+
+      this.prestamos.push(prestamo);
+
+      console.log(
+        `Libro "${libro.titulo}" prestado correctamente.`
+      );
+    } else {
+      console.log("El libro no está disponible.");
+    }
+  }
+
+  devolverLibro(libroId: number): void {
+    const libro = this.libros.find(l => l.id === libroId);
+
+    if (!libro) {
+      console.log("Libro no encontrado.");
+      return;
+    }
+
+    libro.devolverLibro();
+
+    const prestamo = [...this.prestamos]
+      .reverse()
+      .find(
+        p =>
+          p.libroId === libroId &&
+          p.fechaDevolucion === undefined
+      );
+
+    if (prestamo) {
+      prestamo.registrarDevolucion();
+    }
+
+    console.log(
+      `Libro "${libro.titulo}" devuelto correctamente.`
+    );
+  }
+
+  listarPrestamos(): void {
+    console.log("\n===== PRÉSTAMOS =====");
+    this.prestamos.forEach(prestamo =>
+      prestamo.mostrarInfo()
+    );
+  }
+}
