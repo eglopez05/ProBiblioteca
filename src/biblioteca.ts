@@ -228,3 +228,56 @@ class Biblioteca {
     );
   }
 }
+console.log("=== SISTEMA DE BIBLIOTECA ===");
+
+const biblioteca = new Biblioteca();
+
+const categoria1 = new Categoria(
+  1,
+  "Novela",
+  "Ficción",
+  "Literatura",
+  "Narraciones extensas"
+);
+
+biblioteca.agregarCategoria(categoria1);
+const libro1 = new Libro(
+  1,
+  "Cien Años de Soledad",
+  "Gabriel García Márquez",
+  "Novela"
+);
+
+const libro2 = new Libro(
+  2,
+  "Don Quijote de la Mancha",
+  "Miguel de Cervantes",
+  "Novela"
+);
+
+biblioteca.agregarLibro(libro1);
+biblioteca.agregarLibro(libro2);
+
+const usuario1 = new Usuario(
+  1,
+  "Juan Pérez",
+  "juan@gmail.com",
+  "0999999999"
+);
+
+const usuario2 = new Usuario(
+  2,
+  "María Gómez",
+  "maria@gmail.com",
+  "0988888888"
+);
+
+biblioteca.agregarUsuario(usuario1);
+biblioteca.agregarUsuario(usuario2);
+
+biblioteca.listarLibros();
+biblioteca.listarUsuarios();
+biblioteca.prestarLibro(1, 1);
+biblioteca.listarPrestamos();
+biblioteca.devolverLibro(1);
+biblioteca.listarPrestamos();
